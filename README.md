@@ -10,4 +10,5 @@ http://github.com/aliast/pinit
 ```
 
 ![](p.gif)
+
 *未完待续*
