@@ -1,11 +1,15 @@
+import React from 'react'
+
 const styles = {
   position: 'fixed',
   left: 0,
   top: 0,
-  width: '100%'
+  width: '100%',
+  'zIndex': 10000,
+  height: 'auto'
 }
 
-class Pinit extends React.Component {
+export default class Pinit extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -20,13 +24,11 @@ class Pinit extends React.Component {
       pageYOffset: window.pageYOffset
     }, () => {
       const { offsetTop, pageYOffset } = this.state
-      console.log(pageYOffset, offsetTop)
       
       let isInView = pageYOffset >= offsetTop ? true : false
       this.setState({
         isInView: isInView
       })
-      
     })
   }
   
@@ -50,4 +52,3 @@ class Pinit extends React.Component {
 }
 
 
-ReactDOM.render(<Pinit><div className="container">3</div></Pinit>, document.getElementById('root'))
