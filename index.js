@@ -1,4 +1,5 @@
-import React from 'react'
+// @flow
+import React, { PropTypes } from 'react'
 
 const styles = {
   position: 'fixed',
@@ -10,44 +11,59 @@ const styles = {
 }
 
 export default class Pinit extends React.Component {
+  // propTypes
+  props: {
+    pinBar: React.Component   // 需要顶部固定的组件
+  }
+
   constructor(props) {
     super(props)
     this.state = {
-      isInView: false,
+      shouldPin: false,
       pageYOffset: 0,
       offsetTop: 0
     }
   }
   
+  // 要固定的元素是否在viewport中出现
+  pinEleIsInView () {
+    return window.pageYOffset >= this.state.offsetTop
+  }
+
+  contentDidMoveout() {
+    const { contentEle } = this.refs
+    return window.pageYOffset + window.innerHeight > contentEle.offsetTop + contentEle.offsetHeight
+  }
+
   onWindowScroll(e) {
+    const shouldPin = this.pinEleIsInView() && !this.contentDidMoveout()
+    console.log(shouldPin)
     this.setState({
-      pageYOffset: window.pageYOffset
-    }, () => {
-      const { offsetTop, pageYOffset } = this.state
-      
-      let isInView = pageYOffset >= offsetTop ? true : false
-      this.setState({
-        isInView: isInView
-      })
+      shouldPin: shouldPin
     })
   }
   
   setUp() {
-    window.onscroll = e => this.onWindowScroll(e)
-  }
-  
-  componentDidMount() {
-    const { pinit } =  this.refs
-    const { offsetTop } = pinit
-    
     this.setState({
-      offsetTop: offsetTop
-    }, this.setUp)
+      offsetTop: this.refs.pinBar.offsetTop
+    }, () => {
+      window.onscroll = e => this.onWindowScroll(e)
+    })
+  }
+
+  componentDidMount() {
+    this.setUp()
   }
   
   render() {
-    const style = this.state.isInView ? styles : {}
-    return <div ref="pinit" style={style}>{this.props.children}</div>
+    const style = this.state.shouldPin ? styles : {}
+    return (
+      <div>
+        <div ref="pinBar" style={style}>{this.props.pinBar}</div>
+        {/* 内容区 */}
+        <div ref="contentEle">{this.props.children}</div>
+      </div>
+    )
   }
 }
 
