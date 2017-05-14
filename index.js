@@ -20,7 +20,7 @@ export default class Pinit extends React.Component {
     super(props)
     this.state = {
       shouldPin: false,
-      pageYOffset: 0,
+      contentOffsetTop: 0,
       offsetTop: 0
     }
   }
@@ -32,7 +32,7 @@ export default class Pinit extends React.Component {
 
   contentDidMoveout() {
     const { contentEle } = this.refs
-    return window.pageYOffset + window.innerHeight > contentEle.offsetTop + contentEle.offsetHeight
+    return window.pageYOffset + window.innerHeight > this.state.contentOffsetTop + contentEle.offsetHeight
   }
 
   onWindowScroll(e) {
@@ -44,8 +44,10 @@ export default class Pinit extends React.Component {
   }
   
   setUp() {
+    const { pinBar, contentEle } = this.refs
     this.setState({
-      offsetTop: this.refs.pinBar.offsetTop
+      offsetTop: pinBar.offsetTop,
+      contentOffsetTop: contentEle.offsetTop
     }, () => {
       window.onscroll = e => this.onWindowScroll(e)
     })
