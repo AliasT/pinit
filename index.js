@@ -11,11 +11,6 @@ const styles = {
 }
 
 export default class Pinit extends React.Component {
-  // propTypes
-  props: {
-    pinBar: React.Component   // 需要顶部固定的组件
-  }
-
   constructor(props) {
     super(props)
     this.state = {
@@ -30,8 +25,9 @@ export default class Pinit extends React.Component {
   }
 
   contentDidMoveout() {
-    const { contentEle, pinBar } = this.refs
-    return window.pageYOffset + window.innerHeight > contentEle.contentOffsetTop + pinBar.offsetHeight + contentEle.offsetHeight
+    const { pinContainer } = this.refs
+
+    return window.pageYOffset + window.innerHeight > pinContainer.offsetHeight + pinContainer.scrollHeight
   }
 
   onWindowScroll(e) {
@@ -43,9 +39,9 @@ export default class Pinit extends React.Component {
   }
   
   setUp() {
-    const { pinBar, contentEle } = this.refs
+    const { pinContainer } = this.refs
     this.setState({
-      offsetTop: pinBar.offsetTop
+      offsetTop: pinContainer.offsetTop
     }, () => {
       window.onscroll = e => this.onWindowScroll(e)
     })
@@ -58,10 +54,9 @@ export default class Pinit extends React.Component {
   render() {
     const style = this.state.shouldPin ? styles : {}
     return (
-      <div>
-        <div ref="pinBar" style={style}>{this.props.pinBar}</div>
-        {/* 内容区 */}
-        <div ref="contentEle">{this.props.children}</div>
+      <div ref="pinContainer" className={this.props.className}>
+        <div style={style}>{this.props.header}</div>
+        {this.props.children}
       </div>
     )
   }
