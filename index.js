@@ -27,7 +27,7 @@ export default class Pinit extends React.Component {
   contentDidMoveout() {
     const { pinContainer } = this.refs
 
-    return window.pageYOffset + window.innerHeight > pinContainer.offsetHeight + pinContainer.scrollHeight
+    return window.pageYOffset + window.innerHeight > pinContainer.offsetTop + pinContainer.scrollHeight
   }
 
   onWindowScroll(e) {
