@@ -1,33 +1,25 @@
 // @flow
 import React, { PropTypes } from 'react'
-
-const styles = {
-  position: 'fixed',
-  left: 0,
-  top: 0,
-  width: '100%',
-  'zIndex': 10000,
-  height: 'auto'
-}
+import "./pinit.scss"
 
 export default class Pinit extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       shouldPin: false,
-      offsetTop: 0
+      offsetTop: 0,
+      headerOffsetTop: 0
     }
   }
   
   // 要固定的元素是否在viewport中出现
   pinEleIsInView () {
-    return window.pageYOffset >= this.state.offsetTop
+    return window.pageYOffset >= this.state.headerOffsetTop
   }
 
   contentDidMoveout() {
-    const { pinContainer } = this.refs
-
-    return window.pageYOffset + window.innerHeight > pinContainer.offsetTop + pinContainer.scrollHeight
+    const { pinContainer, header } = this.refs
+    return window.pageYOffset + window.innerHeight > this.state.offsetTop + pinContainer.scrollHeight + header.offsetHeight
   }
 
   onWindowScroll(e) {
@@ -39,23 +31,33 @@ export default class Pinit extends React.Component {
   }
   
   setUp() {
-    const { pinContainer } = this.refs
+    const { pinContainer, header } = this.refs
+
+    header.style.height = header.offsetHeight + 'px'
+    debugger
     this.setState({
-      offsetTop: pinContainer.offsetTop
+      offsetTop: pinContainer.getBoundingClientRect().top,
+      headerOffsetTop: header.getBoundingClientRect().top
     }, () => {
       window.onscroll = e => this.onWindowScroll(e)
     })
   }
 
   componentDidMount() {
+    console.log(3)
     this.setUp()
   }
   
   render() {
-    const style = this.state.shouldPin ? styles : {}
+    let headerClassName = "pin-header"
+    if(this.state.shouldPin) {
+      headerClassName = headerClassName + ' ' + "pined"
+    }
     return (
       <div ref="pinContainer" className={this.props.className}>
-        <div style={style}>{this.props.header}</div>
+        <div className={headerClassName} ref="header">
+          <div>{this.props.header}</div>
+        </div>
         {this.props.children}
       </div>
     )
