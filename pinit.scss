@@ -1,0 +1,14 @@
+.pin-header {
+  position: relative;
+
+  &.pined {
+    > div {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      z-index: 10000;
+      height: auto;
+    }
+  }
+}
